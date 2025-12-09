@@ -1,8 +1,9 @@
 import pandas as pd
 import warnings
 from urllib.request import urlopen
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from bs4 import BeautifulSoup
+from time import sleep
 
 warnings.filterwarnings("ignore")
 
@@ -22,6 +23,8 @@ for index, row in data.iterrows():
         html = urlopen(url).read()
         soup = BeautifulSoup(html, features="html.parser")
     except HTTPError as e:
+        continue
+    except URLError as e:
         continue
 
     # Find Upcoming Events section of html

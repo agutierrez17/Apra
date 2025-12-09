@@ -77,7 +77,9 @@ SELECT
 [Last Email Opened Date],
 [Last Email Click Date],
 [Profile Last Updated],
-[Profile last updated by]
+[Profile last updated by],
+[Notes],
+[Years in Prospect Development]
 FROM [APRA-IL].[dbo].[ExcelContacts]
 
 ORDER BY
@@ -199,7 +201,8 @@ SELECT
 [Link Total Clicks Count],
 [Link Category],
 [Link Sub Category],
-[Event Name]
+[Event Name],
+[Page Name]
 FROM [APRA-IL].[dbo].[ExcelLinkClicks]
 WHERE
 [Contact Group] IS NOT NULL

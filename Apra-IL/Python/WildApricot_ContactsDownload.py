@@ -281,104 +281,117 @@ print('')
 
 #### Get list of all contacts ####
 print('Retrieving list of all APRA-IL members...')
+skip = 0
+top = 100
 rows, fields = [],[]
-params = {'$async': 'false'}
-url = "/v2/accounts/" + str(AccountID) + '/Contacts?' + urllib.parse.urlencode(params)
-print(url)
 
-print('')
-contacts = [api.execute_request(url).Contacts]
+while True:
 
-#### Loop through all contacts in list ####
-print('Looping through members...')
-print('')
-for contact in contacts[0]:
-    try:
-        ContactID = contact.Id
-    except Exception as e:
-        ContactID = None
+    params = {'$async': 'false', '$top': top, '$skip': skip}
+    url = "/v2/accounts/" + str(AccountID) + '/Contacts?' + urllib.parse.urlencode(params)
+    print(url)
 
-    try:
-        ContactURL = contact.Url
-    except Exception as e:
-        ContactURL = None
+    print('')
+    contacts = [api.execute_request(url).Contacts]
 
-    try:
-        FirstName = contact.FirstName
-    except Exception as e:
-        FirstName = None
+    if not contacts:
+        break
 
-    try:
-        LastName = contact.LastName
-    except Exception as e:
-        LastName = None
-
-    try:
-        Organization = contact.Organization
-    except Exception as e:
-        Organization = None
-
-    try:
-        Email = contact.Email
-    except Exception as e:
-        Email = None
-
-    try:
-        DisplayName = contact.DisplayName
-    except Exception as e:
-        DisplayName = None
-
-    try:
-        ProfileLastUpdated = contact.ProfileLastUpdated
-    except Exception as e:
-        ProfileLastUpdated = None
-
-    try:
-        MembershipEnabled = contact.MembershipEnabled
-    except Exception as e:
-        MembershipEnabled = None
-
-    try:
-        Status = contact.Status
-    except Exception as e:
-        Status = None
-
-    try:
-        IsAdmin = contact.IsAccountAdministrator
-    except Exception as e:
-        IsAdmin = None
-
-    try:
-        TermsOfUseAccepted = contact.TermsOfUseAccepted
-    except Exception as e:
-        TermsOfUseAccepted = None
-
-    try:
-        MembershipLevel = contact.MembershipLevel.Id
-    except Exception as e:
-        MembershipLevel = None
-
-    for field in contact.FieldValues:
-        SystemCode = field.SystemCode
+    #### Loop through all contacts in list ####
+    print('Looping through members...')
+    for contact in contacts[0]:
+        try:
+            ContactID = contact.Id
+        except Exception as e:
+            ContactID = None
 
         try:
-            Value = str(field.Value.Id)
+            ContactURL = contact.Url
         except Exception as e:
+            ContactURL = None
+
+        try:
+            FirstName = contact.FirstName
+        except Exception as e:
+            FirstName = None
+
+        try:
+            LastName = contact.LastName
+        except Exception as e:
+            LastName = None
+
+        try:
+            Organization = contact.Organization
+        except Exception as e:
+            Organization = None
+
+        try:
+            Email = contact.Email
+        except Exception as e:
+            Email = None
+
+        try:
+            DisplayName = contact.DisplayName
+        except Exception as e:
+            DisplayName = None
+
+        try:
+            ProfileLastUpdated = contact.ProfileLastUpdated
+        except Exception as e:
+            ProfileLastUpdated = None
+
+        try:
+            MembershipEnabled = contact.MembershipEnabled
+        except Exception as e:
+            MembershipEnabled = None
+
+        try:
+            Status = contact.Status
+        except Exception as e:
+            Status = None
+
+        try:
+            IsAdmin = contact.IsAccountAdministrator
+        except Exception as e:
+            IsAdmin = None
+
+        try:
+            TermsOfUseAccepted = contact.TermsOfUseAccepted
+        except Exception as e:
+            TermsOfUseAccepted = None
+
+        try:
+            MembershipLevel = contact.MembershipLevel.Id
+        except Exception as e:
+            MembershipLevel = None
+
+        for field in contact.FieldValues:
+            SystemCode = field.SystemCode
+
             try:
-                Value = str(field.Value[0].Id)
+                Value = str(field.Value.Id)
             except Exception as e:
-                Value = str(field.Value)
+                try:
+                    Value = str(field.Value[0].Id)
+                except Exception as e:
+                    Value = str(field.Value)
 
-        ValueRow = (ContactID,SystemCode,Value)
-        fields.append(ValueRow)
+            ValueRow = (ContactID,SystemCode,Value)
+            fields.append(ValueRow)
 
-    row = (ContactID,ContactURL,FirstName,LastName,Organization,Email,DisplayName,ProfileLastUpdated,MembershipEnabled,Status,IsAdmin,TermsOfUseAccepted,MembershipLevel)
-    rows.append(row)
+        row = (ContactID,ContactURL,FirstName,LastName,Organization,Email,DisplayName,ProfileLastUpdated,MembershipEnabled,Status,IsAdmin,TermsOfUseAccepted,MembershipLevel)
+        rows.append(row)
+
+    if len(contacts[0]) < top:
+        break
+
+    skip += top
 
 # INSERT DATA INTO CONTACTS TABLE
 cursor.execute("""TRUNCATE TABLE [dbo].[Contacts]""")
 cursor.commit()
 
+print('')
 print('Inserting data into Contacts table...')
 cursor.executemany("""
 INSERT INTO [dbo].[Contacts] ([Contact ID],[Contact URL],[First Name],[Last Name],[Organization],[Email],[Display Name],[Profile Last Updated],[Membership Enabled],[Status],[Is Admin],[Terms Of Use Accepted],[Membership Level])

@@ -34,14 +34,17 @@ for job in data.values.tolist():
         r = requests.get(url)
         if r.history:
            active = 'N'
+           #print(jobtitle)
         elif r.text.find(jobtitle) < 0 and r.text.find(jobtitle.replace('&','&amp;')) < 0:
             active = 'N'
+            #print(r.text)
+            #print(jobtitle)
         else:
             active = 'Y'
     except Exception as e:
         active = 'Y'
-        
-    job[6] = active
+
+    active = job[7] if job[7] == 'Y' or job[7] == 'N' else active
     data.loc[data['Link'] == url, 'Active'] = active
 
 # Insert data into JobPostings table
