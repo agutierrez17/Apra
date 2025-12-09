@@ -1,4 +1,14 @@
-CREATE VIEW [dbo].[ExcelContacts] AS
+USE [APRA-IL]
+GO
+
+/****** Object:  View [dbo].[ExcelContacts]    Script Date: 12/8/2025 9:43:05 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER VIEW [dbo].[ExcelContacts] AS
 
 SELECT 
 [Contact ID],
@@ -63,7 +73,11 @@ CONVERT(DATE,ISNULL(REPLACE(LEFT([Last Email Received Date],10),'None','1901-01-
 CONVERT(DATE,ISNULL(REPLACE(LEFT([Last Email Opened Date],10),'None','1901-01-01'),'1901-01-01')) AS "Last Email Opened Date",
 CONVERT(DATE,ISNULL(REPLACE(LEFT([Last Email Click Date],10),'None','1901-01-01'),'1901-01-01')) AS "Last Email Click Date",
 CONVERT(DATE,ISNULL(REPLACE(LEFT([Profile Last Updated],10),'None','1901-01-01'),'1901-01-01')) AS "Profile Last Updated",
-[Profile last updated by]
+[Profile last updated by],
+[Notes],
+[Years in Prospect Development]
 FROM [APRA-IL].[dbo].[APRA-IL_Contacts]
 
 GO
+
+

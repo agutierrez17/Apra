@@ -1,3 +1,13 @@
+USE [APRA-IL]
+GO
+
+/****** Object:  View [dbo].[ExcelLinkClicks]    Script Date: 12/8/2025 10:25:44 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 ALTER VIEW [dbo].[ExcelLinkClicks] AS
 
 SELECT 
@@ -20,8 +30,13 @@ CONVERT(DATE,ISNULL(REPLACE(LEFT([Sent Date],10),'None','1901-01-01'),'1901-01-0
 [Link Total Clicks Count],
 [Link Category],
 [Link Sub Category],
-[Event Name]
+[Event Name],
+U.[Page Name]
 FROM [APRA-IL].[dbo].[APRA-IL_Click_Detail] CD WITH (NOLOCK)
 LEFT OUTER JOIN dbo.[APRA-IL_Contacts] C WITH (NOLOCK) ON CD.[Contact ID] = C.[Contact ID]
+LEFT OUTER JOIN dbo.URLPageTitles U WITH (NOLOCK) ON CAST(CD.[Link URL] AS varchar(max)) = CAST(U.[URL] AS varchar(max))
+
 
 GO
+
+
